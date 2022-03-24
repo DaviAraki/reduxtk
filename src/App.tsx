@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from './hooks/redux';
+import { fetchPokemon } from './store/ducks/pokemon';
 
-function App() {
+export default function App() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchPokemon('charizard'));
+  }, [dispatch]);
+  const { pokemonData, errorPokemon, loadingPokemon } = useAppSelector(
+    (state) => state.pokemon
+  );
+  console.log(pokemonData);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      {errorPokemon ? (
+        <>Oh no, there was an error</>
+      ) : loadingPokemon ? (
+        <>Loading...</>
+      ) : pokemonData ? (
+        <>
+          <h3>{pokemonData.species.name}</h3>
+          <img
+            src={pokemonData.sprites.front_shiny}
+            alt={pokemonData.species.name}
+          />
+        </>
+      ) : null}
     </div>
   );
 }
-
-export default App;
